@@ -52,20 +52,20 @@ def main(args, tests, desc):
     times = np.zeros((4, NTIMES))
 
     # --- SETUP --- determine precision and check timing ---
-    print(HLINE)
-    print("pySTREAM version 0.2")
-    print(HLINE)
+    print(HLINE + '<br>')
+    print("pySTREAM version 0.2 <br>")
+    print(HLINE + '<br>')
     BytesPerWord = np.nbytes[STREAM_TYPE]
-    print("Bytes per array element: %d" % BytesPerWord)
-    print("             Array size: %d (elements)" % STREAM_ARRAY_SIZE)
-    print("                 Offset: %d (elements)" % OFFSET)
-    print("       Memory per array: %.2f MiB (= %.2f GiB)." %
+    print("Bytes per array element: %d <br>" % BytesPerWord)
+    print("             Array size: %d (elements) <br>" % STREAM_ARRAY_SIZE)
+    print("                 Offset: %d (elements) <br>" % OFFSET)
+    print("       Memory per array: %.2f MiB (= %.2f GiB). <br>" %
           (BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),
            BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.0)))
-    print("  Total memory required: %.2f MiB (= %.2f GiB)." %
+    print("  Total memory required: %.2f MiB (= %.2f GiB). <br>" %
           (3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),
            3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.)))
-    print("        Number of tests: %d" % NTIMES)
+    print("        Number of tests: %d <br>" % NTIMES)
 
     # Get initial value for system clock.
     for j in range(STREAM_ARRAY_SIZE):
@@ -75,9 +75,9 @@ def main(args, tests, desc):
 
     quantum = checktick()
     if quantum >= 1:
-        print("      Clock granularity: ~%d us" % quantum)
+        print("      Clock granularity: ~%d us <br>" % quantum)
     else:
-        print("      Clock granularity: <1 us" % quantum)
+        print("      Clock granularity: <1 us <br>" % quantum)
         quantum = 1
 
     t = timer()
@@ -85,16 +85,16 @@ def main(args, tests, desc):
         a[j] = 2.0 * a[j]
     t = 1.0e6 * (timer() - t)
 
-    print("              Test time: ~%d us" % int(t))
-    print("                       :  %d clock ticks)" % int(t/quantum))
+    print("              Test time: ~%d us <br>" % int(t))
+    print("                       :  %d clock ticks) <br>" % int(t/quantum))
     if int(t/quantum) <= 20:
-        print("Note -- this should be > 20 clock ticks")
+        print("Note -- this should be > 20 clock ticks <br>")
 
-    print(HLINE)
-    print("Note -- Bandwidth is calculated using the *minimum* time")
-    print("        (after the first iteration)")
-    print("Note -- This is only a guideline.")
-    print(HLINE)
+    print(HLINE + '<br>')
+    print("Note -- Bandwidth is calculated using the *minimum* time <br>")
+    print("        (after the first iteration) <br>")
+    print("Note -- This is only a guideline. <br>")
+    print(HLINE + '<br>')
 
     # --- MAIN LOOP --- repeat test cases NTIMES times ---
 
@@ -102,7 +102,7 @@ def main(args, tests, desc):
     for test in tests:
 
         if test in desc:
-            print('## %s' % desc[test])
+            print('## %s <br>' % desc[test])
 
         times[:] = 0.0
         for k in range(NTIMES):
@@ -209,7 +209,7 @@ def main(args, tests, desc):
                 times[3][k] = timer() - times[3][k]
 
             else:
-                print('...test not implemented')
+                print('...test not implemented <br>')
 
         # --- SUMMARY ---
 
@@ -217,16 +217,16 @@ def main(args, tests, desc):
         mintime = times[:, 1:].min(axis=1)
         maxtime = times[:, 1:].max(axis=1)
 
-        print("```")
-        print("Function    Best Rate GB/s  Avg time     Min time     Max time")
+        print("``` <br>")
+        print("Function    Best Rate GB/s  Avg time     Min time     Max time <br>")
         for j in range(4):
-            print("%s%12.1f  %11.6f  %11.6f  %11.6f" %
+            print("%s%12.1f  %11.6f  %11.6f  %11.6f <br>" %
                   (label[j],
                    1.0e-09 * tbytes[j]/mintime[j],
                    avgtime[j],
                    mintime[j],
                    maxtime[j]))
-        print("```\n")
+        print("```<br>")
 
 
 if __name__ == '__main__':
@@ -251,15 +251,12 @@ if __name__ == '__main__':
             'cython_omp': 'Cython, optimized',
             'pybind11_ref': 'Pybind11 reference implementation',
            }"""
-
+    
     desc = {'reference': 'Pure Python using loops',
             'vector': 'Pure Python vectorized',
             'numpyops': 'Pure Python using numpy operators',
             }
-    """testlist = ['reference', 'vector', 'numpyops',
-                'cython_ref', 'cython_omp',
-                'pybind11_ref',
-               ]"""
+
     testlist = ['reference', 'vector', 'numpyops',]
     tests = []
 
