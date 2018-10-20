@@ -1,0 +1,44 @@
+-------------------------------------------------------------
+pySTREAM version 0.2
+-------------------------------------------------------------
+Bytes per array element: 8
+             Array size: 10000000 (elements)
+                 Offset: 0 (elements)
+       Memory per array: 76.29 MiB (= 0.07 GiB).
+  Total memory required: 228.88 MiB (= 0.22 GiB).
+        Number of tests: 10
+      Clock granularity: ~1 us
+              Test time: ~2616737 us
+                       :  2616737 clock ticks)
+-------------------------------------------------------------
+Note -- Bandwidth is calculated using the *minimum* time
+        (after the first iteration)
+Note -- This is only a guideline.
+-------------------------------------------------------------
+## Pure Python using loops
+```
+Function    Best Rate GB/s  Avg time     Min time     Max time
+Copy:               0.1     1.810663     1.750474     1.859651
+Scale:              0.1     2.579679     2.545020     2.646903
+Add:                0.1     3.443633     3.371255     3.490134
+Triad:              0.1     4.543142     4.161192     7.124218
+```
+
+## Pure Python vectorized
+```
+Function    Best Rate GB/s  Avg time     Min time     Max time
+Copy:               9.0     0.048227     0.017779     0.144883
+Scale:              2.0     0.169484     0.078973     0.223054
+Add:                2.8     0.190836     0.084954     0.233740
+Triad:              2.5     0.206970     0.096707     0.278969
+```
+
+## Pure Python using numpy operators
+```
+Function    Best Rate GB/s  Avg time     Min time     Max time
+Copy:               2.4     0.139683     0.065610     0.205753
+Scale:              2.1     0.154991     0.076263     0.263691
+Add:                3.5     0.160147     0.068332     0.217012
+Triad:              2.8     0.184735     0.086994     0.227722
+```
+

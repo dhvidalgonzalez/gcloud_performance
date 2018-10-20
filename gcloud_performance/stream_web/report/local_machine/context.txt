@@ -1,0 +1,3 @@
+Local machine characterisctics
+processor: i3 
+Memory: 4G RAM
