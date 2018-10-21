@@ -15,7 +15,7 @@
 # [START gae_python37_app]
 from flask import Flask
 from subprocess import Popen, PIPE
-
+from stream import *
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
@@ -23,10 +23,36 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    process = Popen(["python","stream.py"], stdout=PIPE)
-    (output, err) = process.communicate()
-    exit_code = process.wait()
-    return '<html><body>' + str(output) + '</body></html>'
+    import argparse
+    parser = argparse.ArgumentParser(description='pystream')
+    parser.add_argument('--STREAM_ARRAY_SIZE', action='store',
+                        dest='STREAM_ARRAY_SIZE', type=int,
+                        default=10000000)
+    parser.add_argument('--NTIMES', action='store', dest='NTIMES', type=int,
+                        default=10)
+    parser.add_argument('--OFFSET', action='store', dest='OFFSET', type=int,
+                        default=0)
+    parser.add_argument('--STREAM_TYPE', action='store', dest='STREAM_TYPE',
+                        default='double')
+    parser.add_argument('--test', nargs="*", default=['all'])
+    args = parser.parse_args()
+
+    desc = {'vector': 'Pure Python vectorized',
+            }
+
+    testlist = ['vector',]
+    tests = []
+
+    if 'all' in args.test:
+        tests = testlist
+
+    for test in args.test:
+        if test in testlist:
+            tests.append(test)
+
+    output = main(args, tests, desc)
+    checktick()
+    return '<html><body>' + output + '</body></html>'
 
 
 if __name__ == '__main__':
