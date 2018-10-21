@@ -52,20 +52,22 @@ def main(args, tests, desc):
     times = np.zeros((4, NTIMES))
 
     # --- SETUP --- determine precision and check timing ---
-    print(HLINE + '<br>')
-    print("pySTREAM version 0.2 <br>")
-    print(HLINE + '<br>')
+    str_output = ''
+
+    str_output += HLINE + '<br>'
+    str_output += "pySTREAM version 0.2 <br>"
+    str_output += HLINE + '<br>'
     BytesPerWord = np.nbytes[STREAM_TYPE]
-    print("Bytes per array element: %d <br>" % BytesPerWord)
-    print("             Array size: %d (elements) <br>" % STREAM_ARRAY_SIZE)
-    print("                 Offset: %d (elements) <br>" % OFFSET)
-    print("       Memory per array: %.2f MiB (= %.2f GiB). <br>" %
-          (BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),
-           BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.0)))
-    print("  Total memory required: %.2f MiB (= %.2f GiB). <br>" %
-          (3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),
-           3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.)))
-    print("        Number of tests: %d <br>" % NTIMES)
+    str_output += "Bytes per array element: %d <br>" % BytesPerWord
+    str_output += "             Array size: %d (elements) <br>" % STREAM_ARRAY_SIZE
+    str_output += "                 Offset: %d (elements) <br>" % OFFSET
+    str_output += "       Memory per array: %.2f MiB (= %.2f GiB). <br>" %\
+          (BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),\
+           BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.0))
+    str_output += "  Total memory required: %.2f MiB (= %.2f GiB). <br>" %\
+          (3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0),\
+           3.0 * BytesPerWord * (STREAM_ARRAY_SIZE / 1024.0 / 1024.0 / 1024.))
+    str_output += "        Number of tests: %d <br>" % NTIMES
 
     # Get initial value for system clock.
     for j in range(STREAM_ARRAY_SIZE):
@@ -75,9 +77,9 @@ def main(args, tests, desc):
 
     quantum = checktick()
     if quantum >= 1:
-        print("      Clock granularity: ~%d us <br>" % quantum)
+        str_output += "      Clock granularity: ~%d us <br>" % quantum
     else:
-        print("      Clock granularity: <1 us <br>" % quantum)
+        str_output += "      Clock granularity: <1 us <br>" % quantum
         quantum = 1
 
     t = timer()
@@ -85,16 +87,16 @@ def main(args, tests, desc):
         a[j] = 2.0 * a[j]
     t = 1.0e6 * (timer() - t)
 
-    print("              Test time: ~%d us <br>" % int(t))
-    print("                       :  %d clock ticks) <br>" % int(t/quantum))
+    str_output += "              Test time: ~%d us <br>" % int(t)
+    str_output += "                       :  %d clock ticks) <br>" % int(t/quantum)
     if int(t/quantum) <= 20:
-        print("Note -- this should be > 20 clock ticks <br>")
+        str_output += "Note -- this should be > 20 clock ticks <br>"
 
-    print(HLINE + '<br>')
-    print("Note -- Bandwidth is calculated using the *minimum* time <br>")
-    print("        (after the first iteration) <br>")
-    print("Note -- This is only a guideline. <br>")
-    print(HLINE + '<br>')
+    str_output += HLINE + '<br>'
+    str_output += "Note -- Bandwidth is calculated using the *minimum* time <br>"
+    str_output += "        (after the first iteration) <br>"
+    str_output += "Note -- This is only a guideline. <br>"
+    str_output += HLINE + '<br>'
 
     # --- MAIN LOOP --- repeat test cases NTIMES times ---
 
@@ -102,7 +104,7 @@ def main(args, tests, desc):
     for test in tests:
 
         if test in desc:
-            print('## %s <br>' % desc[test])
+            str_output += '## %s <br>' % desc[test]
 
         times[:] = 0.0
         for k in range(NTIMES):
@@ -209,7 +211,7 @@ def main(args, tests, desc):
                 times[3][k] = timer() - times[3][k]
 
             else:
-                print('...test not implemented <br>')
+                str_output += '...test not implemented <br>'
 
         # --- SUMMARY ---
 
@@ -217,55 +219,15 @@ def main(args, tests, desc):
         mintime = times[:, 1:].min(axis=1)
         maxtime = times[:, 1:].max(axis=1)
 
-        print("``` <br>")
-        print("Function    Best Rate GB/s  Avg time     Min time     Max time <br>")
+        str_output += "``` <br>"
+        str_output += "Function    Best Rate GB/s  Avg time     Min time     Max time <br>"
         for j in range(4):
-            print("%s%12.1f  %11.6f  %11.6f  %11.6f <br>" %
-                  (label[j],
-                   1.0e-09 * tbytes[j]/mintime[j],
-                   avgtime[j],
-                   mintime[j],
-                   maxtime[j]))
-        print("```<br>")
+            str_output += "%s%12.1f  %11.6f  %11.6f  %11.6f <br>" %\
+                  (label[j],\
+                   1.0e-09 * tbytes[j]/mintime[j],\
+                   avgtime[j],\
+                   mintime[j],\
+                   maxtime[j])
+        str_output += "```<br>"
 
-
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser(description='pystream')
-    parser.add_argument('--STREAM_ARRAY_SIZE', action='store',
-                        dest='STREAM_ARRAY_SIZE', type=int,
-                        default=10000000)
-    parser.add_argument('--NTIMES', action='store', dest='NTIMES', type=int,
-                        default=10)
-    parser.add_argument('--OFFSET', action='store', dest='OFFSET', type=int,
-                        default=0)
-    parser.add_argument('--STREAM_TYPE', action='store', dest='STREAM_TYPE',
-                        default='double')
-    parser.add_argument('--test', nargs="*", default=['all'])
-    args = parser.parse_args()
-
-    """desc = {'reference': 'Pure Python using loops',
-            'vector': 'Pure Python vectorized',
-            'numpyops': 'Pure Python using numpy operators',
-            'cython_ref': 'Cython, a reference implementation',
-            'cython_omp': 'Cython, optimized',
-            'pybind11_ref': 'Pybind11 reference implementation',
-           }"""
-    
-    desc = {'reference': 'Pure Python using loops',
-            'vector': 'Pure Python vectorized',
-            'numpyops': 'Pure Python using numpy operators',
-            }
-
-    testlist = ['reference', 'vector', 'numpyops',]
-    tests = []
-
-    if 'all' in args.test:
-        tests = testlist
-
-    for test in args.test:
-        if test in testlist:
-            tests.append(test)
-
-    main(args, tests, desc)
-    checktick()
+        return str_output
